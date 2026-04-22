@@ -1,0 +1,95 @@
+name: Project3 Go CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "project3/**"
+      - ".github/workflows/ci-project3.yml"
+  pull_request:
+    paths:
+      - "project3/**"
+      - ".github/workflows/ci-project3.yml"
+
+defaults:
+  run:
+    working-directory: project3
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21.x"
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+
+      - name: Run golangci-lint
+        run: "$(go env GOPATH)/bin/golangci-lint" run ./...
+
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21.x"
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Install gosec
+        run: go install github.com/securego/gosec/v2/cmd/gosec@v2.22.4
+
+      - name: Run gosec
+        run: "$(go env GOPATH)/bin/gosec" ./...
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21.x"
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: project3-coverage
+          path: project3/coverage.out
+          if-no-files-found: error
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21.x"
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build binary
+        run: |
+          mkdir -p dist
+          go build -o dist/app ./cmd/app
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: project3-app
+          path: project3/dist/app
+          if-no-files-found: error
