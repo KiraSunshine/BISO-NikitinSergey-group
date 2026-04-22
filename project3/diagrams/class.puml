@@ -1,0 +1,61 @@
+@startuml class
+skinparam classAttributeIconSize 0
+
+interface Command {
+  +Execute() string
+  +Undo() string
+}
+
+interface Observer {
+  +Update(event string, data any)
+}
+
+interface TaskRepository {
+  +Add(task Task) Task
+  +Update(task Task)
+  +Delete(id int)
+  +GetByID(id int) Task
+  +List() []Task
+  +NextID() int
+}
+
+class Task {
+  +ID int
+  +Description string
+  +Done bool
+  +String() string
+}
+
+class TaskManager {
+  -repo TaskRepository
+  -observers []Observer
+  +AddTask(description string) int
+  +MarkDone(id int)
+  +DeleteTask(id int)
+  +GetTasks() []Task
+  +Subscribe(o Observer)
+  +Notify(event string, data any)
+}
+
+class InMemoryRepository
+class ConsoleLogger
+class CommandFactory
+class AddCommand
+class ListCommand
+class DoneCommand
+class DeleteCommand
+
+Command <|.. AddCommand
+Command <|.. ListCommand
+Command <|.. DoneCommand
+Command <|.. DeleteCommand
+Observer <|.. ConsoleLogger
+TaskRepository <|.. InMemoryRepository
+TaskManager o-- Observer
+TaskManager --> TaskRepository
+TaskManager *-- Task
+CommandFactory --> AddCommand
+CommandFactory --> ListCommand
+CommandFactory --> DoneCommand
+CommandFactory --> DeleteCommand
+@enduml

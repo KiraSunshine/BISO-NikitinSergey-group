@@ -1,0 +1,79 @@
+
+digraph G {
+  graph [rankdir=LR, splines=ortho, nodesep=0.5, ranksep=0.8, pad=0.2, bgcolor="white"];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#6F5A3B"];
+
+  Notifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FBE9D2"><B>Notifier</B> &lt;&lt;interface&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">+Send(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  NotifierCreator [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF1E1"><B><I>NotifierCreator</I></B> &lt;&lt;abstract&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">+CreateNotifier() Notifier</TD></TR>
+      <TR><TD ALIGN="LEFT">+NotifyClient(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  EmailCreator [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF8EE"><B>EmailCreator</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-smtpHost string</TD></TR>
+      <TR><TD ALIGN="LEFT">+CreateNotifier() Notifier</TD></TR>
+    </TABLE>
+  >];
+
+  SmsCreator [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF8EE"><B>SmsCreator</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-gateway string</TD></TR>
+      <TR><TD ALIGN="LEFT">+CreateNotifier() Notifier</TD></TR>
+    </TABLE>
+  >];
+
+  TelegramCreator [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF8EE"><B>TelegramCreator</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-botToken string</TD></TR>
+      <TR><TD ALIGN="LEFT">+CreateNotifier() Notifier</TD></TR>
+    </TABLE>
+  >];
+
+  EmailNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF8EE"><B>EmailNotifier</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-smtpHost string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Send(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  SmsNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF8EE"><B>SmsNotifier</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-gateway string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Send(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  TelegramNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#9A5B18">
+      <TR><TD BGCOLOR="#FFF8EE"><B>TelegramNotifier</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-botToken string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Send(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  EmailCreator -> NotifierCreator [arrowhead=empty, label="встраивание"];
+  SmsCreator -> NotifierCreator [arrowhead=empty, label="встраивание"];
+  TelegramCreator -> NotifierCreator [arrowhead=empty, label="встраивание"];
+  EmailNotifier -> Notifier [style=dashed, arrowhead=empty, label="реализует"];
+  SmsNotifier -> Notifier [style=dashed, arrowhead=empty, label="реализует"];
+  TelegramNotifier -> Notifier [style=dashed, arrowhead=empty, label="реализует"];
+  EmailCreator -> EmailNotifier [style=dashed, label="<<creates>>"];
+  SmsCreator -> SmsNotifier [style=dashed, label="<<creates>>"];
+  TelegramCreator -> TelegramNotifier [style=dashed, label="<<creates>>"];
+}

@@ -1,0 +1,55 @@
+@startuml sequence_autoservice_nsa_13
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+' nsa_13
+title Диаграмма последовательности — запись на обслуживание
+' author-mark: nsa_13 | Никитин Сергей Андреевич | вариант 13
+
+actor "Клиент" as Client
+participant "Web UI" as UI
+participant "Scheduling Service" as Scheduling
+participant "Pricing Service" as Pricing
+database "Database" as DB
+participant "Notification Service" as Notify
+
+Client -> UI : выбрать авто, услуги и дату
+activate UI
+UI -> Scheduling : CreateAppointment(clientId, vehicleId, serviceCodes, preferredDate)
+activate Scheduling
+
+Scheduling -> DB : FindClient(clientId)
+activate DB
+DB --> Scheduling : Client struct
+deactivate DB
+
+Scheduling -> DB : CheckFreeSlot(preferredDate)
+activate DB
+DB --> Scheduling : SlotInfo
+deactivate DB
+
+alt слот доступен
+    Scheduling -> Pricing : Calculate(serviceCodes, vehicleId)
+    activate Pricing
+    Pricing --> Scheduling : totalCost
+    deactivate Pricing
+
+    Scheduling -> DB : SaveAppointment(..., totalCost)
+    activate DB
+    DB --> Scheduling : Appointment struct
+    deactivate DB
+
+    Scheduling -> Notify : SendConfirmation(phone, date, totalCost)
+    activate Notify
+    Notify --> Scheduling : delivered
+    deactivate Notify
+
+    Scheduling --> UI : appointmentConfirmed(number, totalCost)
+    UI --> Client : номер записи и стоимость
+else слот недоступен
+    Scheduling --> UI : slotUnavailable(alternativeDates)
+    UI --> Client : предложить другие даты
+end
+
+deactivate Scheduling
+deactivate UI
+@enduml

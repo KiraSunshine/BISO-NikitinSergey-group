@@ -1,0 +1,58 @@
+@startuml pattern_observer_autoservice
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor #F7FBFF
+    BorderColor #2E5D8A
+}
+
+title Паттерн Observer для системы автосервиса
+
+interface "Observer" as Observer <<interface>> {
+    +Update(orderID string, status string)
+}
+
+interface "Subject" as Subject <<interface>> {
+    +Subscribe(observer Observer)
+    +Unsubscribe(observer Observer)
+    +Notify()
+}
+
+abstract class "BaseNotifier" as BaseNotifier <<abstract>> {
+    -channelName string
+    +Name(): string
+}
+
+class "RepairOrder" as RepairOrder <<struct>> {
+    -orderID string
+    -status string
+    -observers []Observer
+    +Subscribe(observer Observer)
+    +Unsubscribe(observer Observer)
+    +Notify()
+    +SetStatus(status string)
+}
+
+class "EmailNotifier" as EmailNotifier <<struct>> {
+    -smtpHost string
+    +Update(orderID string, status string)
+}
+
+class "SmsNotifier" as SmsNotifier <<struct>> {
+    -gateway string
+    +Update(orderID string, status string)
+}
+
+class "DashboardNotifier" as DashboardNotifier <<struct>> {
+    -screenID string
+    +Update(orderID string, status string)
+}
+
+Subject <|.. RepairOrder
+Observer <|.. EmailNotifier
+Observer <|.. SmsNotifier
+Observer <|.. DashboardNotifier
+BaseNotifier <|-- EmailNotifier : встраивание
+BaseNotifier <|-- SmsNotifier : встраивание
+BaseNotifier <|-- DashboardNotifier : встраивание
+RepairOrder "1" o-- "0..*" Observer : оповещает
+@enduml

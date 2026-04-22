@@ -1,0 +1,76 @@
+
+digraph G {
+  graph [rankdir=LR, splines=ortho, nodesep=0.45, ranksep=0.7, pad=0.2, bgcolor="white"];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#555555"];
+
+  Observer [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#DDECFB"><B>Observer</B> &lt;&lt;interface&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">+Update(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  Subject [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#DDECFB"><B>Subject</B> &lt;&lt;interface&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">+Subscribe(observer Observer)</TD></TR>
+      <TR><TD ALIGN="LEFT">+Unsubscribe(observer Observer)</TD></TR>
+      <TR><TD ALIGN="LEFT">+Notify()</TD></TR>
+    </TABLE>
+  >];
+
+  BaseNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#EAF3FC"><B><I>BaseNotifier</I></B> &lt;&lt;abstract&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-channelName string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Name() string</TD></TR>
+    </TABLE>
+  >];
+
+  RepairOrder [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#F7FBFF"><B>RepairOrder</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-orderID string</TD></TR>
+      <TR><TD ALIGN="LEFT">-status string</TD></TR>
+      <TR><TD ALIGN="LEFT">-observers []Observer</TD></TR>
+      <TR><TD ALIGN="LEFT">+Subscribe(observer Observer)</TD></TR>
+      <TR><TD ALIGN="LEFT">+Unsubscribe(observer Observer)</TD></TR>
+      <TR><TD ALIGN="LEFT">+Notify()</TD></TR>
+      <TR><TD ALIGN="LEFT">+SetStatus(status string)</TD></TR>
+    </TABLE>
+  >];
+
+  EmailNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#F7FBFF"><B>EmailNotifier</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-smtpHost string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Update(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  SmsNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#F7FBFF"><B>SmsNotifier</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-gateway string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Update(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  DashboardNotifier [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#2E5D8A">
+      <TR><TD BGCOLOR="#F7FBFF"><B>DashboardNotifier</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-screenID string</TD></TR>
+      <TR><TD ALIGN="LEFT">+Update(orderID string, status string)</TD></TR>
+    </TABLE>
+  >];
+
+  RepairOrder -> Subject [style=dashed, arrowhead=empty, arrowsize=1.0, label="реализует"];
+  EmailNotifier -> Observer [style=dashed, arrowhead=empty, label="реализует"];
+  SmsNotifier -> Observer [style=dashed, arrowhead=empty, label="реализует"];
+  DashboardNotifier -> Observer [style=dashed, arrowhead=empty, label="реализует"];
+  EmailNotifier -> BaseNotifier [arrowhead=empty, label="встраивание"];
+  SmsNotifier -> BaseNotifier [arrowhead=empty, label="встраивание"];
+  DashboardNotifier -> BaseNotifier [arrowhead=empty, label="встраивание"];
+  RepairOrder -> Observer [arrowhead=odiamond, label="0..* оповещает", dir=both, arrowtail=none];
+}

@@ -1,0 +1,28 @@
+@startuml pattern_singleton_autoservice
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor #F4F7F1
+    BorderColor #4E7A39
+}
+
+title Паттерн Singleton для конфигурации автосервиса
+
+class "AppConfig" as AppConfig <<singleton>> {
+    -smtpHost string
+    -smsGateway string
+    -telegramToken string
+    -retryCount int
+    -instance *AppConfig
+    -once sync.Once
+    +GetAppConfig(): *AppConfig
+    +Summary(): string
+}
+
+class "OrderService" as OrderService <<struct>> {
+    -config *AppConfig
+    +NewOrderService()
+    +PrintConfig()
+}
+
+OrderService --> AppConfig : использует
+@enduml

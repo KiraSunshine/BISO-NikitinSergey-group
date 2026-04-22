@@ -1,0 +1,54 @@
+image: golang:1.21
+
+variables:
+  GOCACHE: "$CI_PROJECT_DIR/.cache/go-build"
+  GOMODCACHE: "$CI_PROJECT_DIR/.cache/go/pkg/mod"
+  GOFLAGS: "-mod=mod"
+
+cache:
+  paths:
+    - .cache/go-build
+    - .cache/go/pkg/mod
+
+stages:
+  - lint
+  - sast
+  - test
+  - build
+
+before_script:
+  - go version
+  - go mod download
+
+lint:
+  stage: lint
+  script:
+    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+    - "$(go env GOPATH)/bin/golangci-lint" run ./...
+
+sast:
+  stage: sast
+  script:
+    - go install github.com/securego/gosec/v2/cmd/gosec@v2.22.4
+    - "$(go env GOPATH)/bin/gosec" ./...
+
+test:
+  stage: test
+  script:
+    - go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
+  artifacts:
+    when: always
+    paths:
+      - coverage.out
+    expire_in: 1 week
+
+build:
+  stage: build
+  script:
+    - mkdir -p dist
+    - go build -o dist/app ./cmd/app
+  artifacts:
+    when: always
+    paths:
+      - dist/app
+    expire_in: 1 week

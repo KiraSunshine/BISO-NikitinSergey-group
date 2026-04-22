@@ -1,0 +1,31 @@
+
+digraph G {
+  graph [rankdir=LR, splines=ortho, nodesep=0.6, ranksep=0.8, pad=0.2, bgcolor="white"];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#4E7A39"];
+
+  AppConfig [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#4E7A39">
+      <TR><TD BGCOLOR="#DCEAD4"><B>AppConfig</B> &lt;&lt;singleton&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-smtpHost string</TD></TR>
+      <TR><TD ALIGN="LEFT">-smsGateway string</TD></TR>
+      <TR><TD ALIGN="LEFT">-telegramToken string</TD></TR>
+      <TR><TD ALIGN="LEFT">-retryCount int</TD></TR>
+      <TR><TD ALIGN="LEFT">-instance *AppConfig</TD></TR>
+      <TR><TD ALIGN="LEFT">-once sync.Once</TD></TR>
+      <TR><TD ALIGN="LEFT">+GetAppConfig() *AppConfig</TD></TR>
+      <TR><TD ALIGN="LEFT">+Summary() string</TD></TR>
+    </TABLE>
+  >];
+
+  OrderService [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#4E7A39">
+      <TR><TD BGCOLOR="#F4F7F1"><B>OrderService</B> &lt;&lt;struct&gt;&gt;</TD></TR>
+      <TR><TD ALIGN="LEFT">-config *AppConfig</TD></TR>
+      <TR><TD ALIGN="LEFT">+NewOrderService()</TD></TR>
+      <TR><TD ALIGN="LEFT">+PrintConfig()</TD></TR>
+    </TABLE>
+  >];
+
+  OrderService -> AppConfig [label="использует"];
+}

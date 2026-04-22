@@ -1,0 +1,107 @@
+@startuml class_autoservice_nsa_13
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+' nsa_13
+title Диаграмма классов — Система управления автосервисом
+' author-mark: nsa_13 | Никитин Сергей Андреевич | вариант 13
+
+interface "Pricable" as Pricable <<interface>> {
+    +CalculatePrice(mileage int): float64
+}
+
+interface "Notifiable" as Notifiable <<interface>> {
+    +Send(channel string): error
+}
+
+class "Person" as Person <<struct>> {
+    #ID: int
+    #FullName: string
+    #Phone: string
+    +GetContact(): string
+}
+
+class "Client" as Client <<struct>> {
+    -LoyaltyLevel: string
+    -BonusBalance: int
+    +CreateAppointment(vehicle Vehicle): Appointment
+    +GetActiveAppointments(): []Appointment
+}
+
+class "Manager" as Manager <<struct>> {
+    -EmployeeID: string
+    -WorkShift: string
+    +AssignMechanic(order WorkOrder, mech Mechanic): error
+    +BuildDailyReport(): string
+}
+
+class "Mechanic" as Mechanic <<struct>> {
+    -Qualification: string
+    -BayNumber: int
+    +StartWork(order WorkOrder): error
+    +CompleteWork(order WorkOrder): error
+}
+
+class "Vehicle" as Vehicle <<struct>> {
+    -VIN: string
+    -Brand: string
+    -Model: string
+    -Year: int
+    +GetDisplayName(): string
+}
+
+class "Service" as Service <<struct>> {
+    -Code: string
+    -Name: string
+    -BasePrice: float64
+    -DurationMin: int
+    +CalculatePrice(mileage int): float64
+}
+
+class "Appointment" as Appointment <<struct>> {
+    -ScheduledAt: time.Time
+    -Status: string
+    -EstimatedTotal: float64
+    +Confirm(): bool
+    +Cancel(): error
+}
+
+class "WorkOrder" as WorkOrder <<struct>> {
+    -OpenedAt: time.Time
+    -ClosedAt: time.Time
+    -Mileage: int
+    -DiagnosticNotes: string
+    +Open(): error
+    +Close(): error
+}
+
+class "Invoice" as Invoice <<struct>> {
+    -Number: string
+    -Amount: float64
+    -Paid: bool
+    +MarkPaid(): error
+    +Refund(): error
+}
+
+class "Notification" as Notification <<struct>> {
+    -Channel: string
+    -Message: string
+    -SentAt: time.Time
+    +Send(channel string): error
+}
+
+Person <|-- Client : встраивание
+Person <|-- Manager : встраивание
+Person <|-- Mechanic : встраивание
+
+Client "1" -- "1..*" Vehicle : владеет
+Vehicle "1" -- "0..*" Appointment : используется в записи
+Appointment "1" *-- "1" WorkOrder : порождает
+WorkOrder "1" *-- "1" Invoice : выставляет
+Appointment "1" o-- "0..*" Notification : уведомляет
+WorkOrder "1" -- "1..*" Service : включает
+Manager "1" -- "0..*" WorkOrder : оформляет
+Mechanic "1" -- "0..*" WorkOrder : выполняет
+
+Service ..|> Pricable : реализует
+Notification ..|> Notifiable : реализует
+@enduml

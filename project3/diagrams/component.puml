@@ -1,0 +1,31 @@
+@startuml component
+package "CLI" {
+  [cmd/app/main.go] as Main
+}
+
+package "Patterns" {
+  [CommandFactory] as Factory
+  [Commands] as Commands
+  [ConsoleLogger] as Logger
+}
+
+package "Domain" {
+  [TaskManager] as TM
+  [Task] as Task
+  [Observer] as Observer
+  [TaskRepository] as RepoInterface
+}
+
+package "Storage" {
+  [InMemoryRepository] as Repo
+}
+
+Main --> Factory
+Factory --> Commands
+Commands --> TM
+TM --> RepoInterface
+Repo ..|> RepoInterface
+TM --> Observer
+Logger ..|> Observer
+TM --> Task
+@enduml

@@ -1,0 +1,45 @@
+@startuml deployment_autoservice_nsa_13
+skinparam shadowing false
+' nsa_13
+title Диаграмма развёртывания — Система управления автосервисом
+' author-mark: nsa_13 | Никитин Сергей Андреевич | вариант 13
+
+node "Client Device" as ClientNode {
+    artifact "Browser"
+    artifact "Mobile Browser"
+}
+
+node "Web Server" as WebNode {
+    artifact "nginx"
+    artifact "SPA build"
+}
+
+node "Application Server" as AppNode {
+    artifact "api-gateway.jar"
+    artifact "scheduling-service.jar"
+    artifact "pricing-service.jar"
+    artifact "workorder-service.jar"
+    artifact "reporting-service.jar"
+    artifact "notification-service.jar"
+}
+
+node "DB Server" as DBNode {
+    artifact "PostgreSQL 16"
+    artifact "backup-agent"
+}
+
+node "SMS Provider" as SmsNode {
+    artifact "sms-api"
+}
+
+"Browser" --> "nginx" : HTTPS
+"Mobile Browser" --> "nginx" : HTTPS
+"nginx" --> "api-gateway.jar" : HTTP/REST
+"api-gateway.jar" --> "scheduling-service.jar" : gRPC
+"api-gateway.jar" --> "workorder-service.jar" : gRPC
+"scheduling-service.jar" --> "pricing-service.jar" : gRPC
+"scheduling-service.jar" --> "PostgreSQL 16" : JDBC / PostgreSQL
+"workorder-service.jar" --> "PostgreSQL 16" : JDBC / PostgreSQL
+"reporting-service.jar" --> "PostgreSQL 16" : JDBC / PostgreSQL
+"notification-service.jar" --> "sms-api" : HTTPS
+@enduml

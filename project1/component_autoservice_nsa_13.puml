@@ -1,0 +1,40 @@
+@startuml component_autoservice_nsa_13
+skinparam componentStyle rectangle
+skinparam shadowing false
+' nsa_13
+title Диаграмма компонентов — Система управления автосервисом
+' author-mark: nsa_13 | Никитин Сергей Андреевич | вариант 13
+
+package "Frontend" {
+  [Web Client] as Web
+  [Admin Panel] as AdminPanel
+}
+
+package "Backend" {
+  [API Gateway] as API
+  [Scheduling Service] as Scheduling
+  [Pricing Service] as Pricing
+  [Work Order Service] as WorkOrder
+  [Notification Service] as Notify
+  [Reporting Service] as Report
+}
+
+package "External Services" {
+  [SMS Gateway] as SMS
+}
+
+database "PostgreSQL" as DB
+
+Web --> API : HTTPS / REST
+AdminPanel --> API : HTTPS / REST
+API --> Scheduling : HTTP/gRPC
+API --> WorkOrder : HTTP/gRPC
+API --> Report : HTTP/gRPC
+Scheduling --> Pricing : gRPC
+Scheduling --> Notify : HTTP
+Scheduling --> DB : postgres://
+WorkOrder --> DB : postgres://
+Pricing --> DB : read-only SQL
+Report --> DB : SQL
+Notify --> SMS : HTTPS API
+@enduml

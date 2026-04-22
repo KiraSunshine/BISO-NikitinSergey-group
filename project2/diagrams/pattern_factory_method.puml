@@ -1,0 +1,58 @@
+@startuml pattern_factory_method_autoservice
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor #FFF8EE
+    BorderColor #9A5B18
+}
+
+title Паттерн Factory Method для выбора канала уведомления
+
+interface "Notifier" as Notifier <<interface>> {
+    +Send(orderID string, status string)
+}
+
+abstract class "NotifierCreator" as NotifierCreator <<abstract>> {
+    +CreateNotifier(): Notifier
+    +NotifyClient(orderID string, status string)
+}
+
+class "EmailCreator" as EmailCreator <<struct>> {
+    -smtpHost string
+    +CreateNotifier(): Notifier
+}
+
+class "SmsCreator" as SmsCreator <<struct>> {
+    -gateway string
+    +CreateNotifier(): Notifier
+}
+
+class "TelegramCreator" as TelegramCreator <<struct>> {
+    -botToken string
+    +CreateNotifier(): Notifier
+}
+
+class "EmailNotifier" as EmailNotifier <<struct>> {
+    -smtpHost string
+    +Send(orderID string, status string)
+}
+
+class "SmsNotifier" as SmsNotifier <<struct>> {
+    -gateway string
+    +Send(orderID string, status string)
+}
+
+class "TelegramNotifier" as TelegramNotifier <<struct>> {
+    -botToken string
+    +Send(orderID string, status string)
+}
+
+Notifier <|.. EmailNotifier
+Notifier <|.. SmsNotifier
+Notifier <|.. TelegramNotifier
+NotifierCreator <|-- EmailCreator : встраивание
+NotifierCreator <|-- SmsCreator : встраивание
+NotifierCreator <|-- TelegramCreator : встраивание
+EmailCreator ..> EmailNotifier : <<creates>>
+SmsCreator ..> SmsNotifier : <<creates>>
+TelegramCreator ..> TelegramNotifier : <<creates>>
+@enduml

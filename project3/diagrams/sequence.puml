@@ -1,0 +1,21 @@
+@startuml sequence
+actor User
+participant main
+participant CommandFactory as Factory
+participant AddCommand as Cmd
+participant TaskManager as TM
+participant ConsoleLogger as Logger
+participant InMemoryRepository as Repo
+
+User -> main : ./app -add "Подготовить отчёт"
+main -> Factory : CreateAdd("Подготовить отчёт")
+Factory --> main : AddCommand
+main -> Cmd : Execute()
+Cmd -> TM : AddTask("Подготовить отчёт")
+TM -> Repo : Add(Task)
+Repo --> TM : Task{ID=1}
+TM -> Logger : Update("task_added", Task)
+TM --> Cmd : ID=1
+Cmd --> main : "Задача добавлена с ID 1"
+main --> User : вывод результата
+@enduml

@@ -1,0 +1,12 @@
+{
+  "cd '/mnt/data/project13_nsa_13' && gofmt -w ./cmd ./internal": {
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "cd '/mnt/data/project13_nsa_13' && go test ./...": {
+    "returncode": 0,
+    "stdout": "?   \tgitlab.com/nikitins506/pr3_name_nsa_13/cmd/app\t[no test files]\n?   \tgitlab.com/nikitins506/pr3_name_nsa_13/internal/storage\t[no test files]\nok  \tgitlab.com/nikitins506/pr3_name_nsa_13/internal/domain\t0.012s\nok  \tgitlab.com/nikitins506/pr3_name_nsa_13/internal/patterns\t0.062s\n",
+    "stderr": ""
+  }
+}

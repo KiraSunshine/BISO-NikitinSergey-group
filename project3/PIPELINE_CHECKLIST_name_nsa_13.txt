@@ -1,0 +1,3 @@
+name_nsa_13
+lint -> sast -> test -> build
+artifacts: coverage.out, dist/app
